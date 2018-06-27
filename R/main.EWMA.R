@@ -158,7 +158,16 @@ EWMA.CARL.MC.integrand <- function(U, V, L, lambda, mm, ss, tt){
 	
 	one.vec <- matrix(1, ncol = 1, nrow = 2 * tt + 1)
 	
-	xi.vec %*% solve(I.matrix - QQ) %*% one.vec
+	inv.matrix <- try(solve(I.matrix - QQ), silent = TRUE)
+	
+	if (class(inv.matrix) == 'try-error') {
+	
+		cat('try-error', '\n')
+		inv.matrix <- MASS::ginv(I.matrix - QQ)
+	
+	}
+	
+	xi.vec %*% inv.matrix %*% one.vec
 
 }
 
@@ -193,6 +202,52 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 	
 }
 
-EWMA.get.cc.MC(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, mm = 100, ss = Inf, tt = 3, reltol = 1e-6)
+EWMA.get.cc.MC(ARL0 = 370, interval = c(2.3, 3), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = 0.2, mm = 100, ss = Inf, tt = 50, reltol = 1e-6)
 
+####################################################################################################################################################
+
+EWMA.sim <- function(L, lambda, mm, z.sim = 1000, sim = 1000){
+
+	PH1.X <- matrix(rnorm(sim * mm), nrow = mm, ncol = sim)
+
+	mu.hat.vec <- colMeans(PH1.X)
+	
+	sigma.hat.vec <- sqrt(diag(var(PH1.X)))
+	
+	sigma.hat.vec <- sigma.hat.vec / c4.f(m - 1)
+	
+	RL.vec <- rep(NA, sim)
+
+	mu.hat.vec <- rnorm(sim)
+	
+	sigma2.hat.vec <- rchisq(sim, mm - 1)
+	
+	Z.vec <- rep(NA, z.sim)
+	
+	for (ii in 1:sim){
+	
+		RL <- 0
+		RL.done <- 0
+		
+		X.bar <- rnorm(z.sim, mu.hat.vec[ii], sigma2.hat.vec)
+	
+		for (jj in 1:z.sim) {
+		
+			if (ii > 1) {
+		
+				Z.vec[ii] <- 
+		
+			} else {
+			
+				
+			
+			}
+		
+		}
+	
+		
+	
+	}
+}	
+	
