@@ -65,27 +65,27 @@ EWMA.get.cc.DP <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 	
 }
 
-#plot.vec <- rep(NA, 6)
-#
-#lambda <- 0.8
-#
-#plot.vec[1] <- EWMA.get.cc(ARL0 = 370, interval = c(1, 2.57), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = lambda, mm = 10, ss = Inf)
-#	
-#plot.vec[2] <- EWMA.get.cc(ARL0 = 370, interval = c(1, 3), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = lambda, mm = 20, ss = Inf)
-#	
-#plot.vec[3] <- EWMA.get.cc(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = lambda, mm = 50, ss = Inf)
-#	
-#plot.vec[4] <- EWMA.get.cc(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = lambda, mm = 100, ss = Inf)	
-#	
-#plot.vec[5] <- EWMA.get.cc(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = lambda, mm = 200, ss = Inf)	
-#	
-#plot.vec[6] <- EWMA.get.cc(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)	
+plot.vec <- rep(NA, 6)
+
+lambda <- 0.9
+
+plot.vec[1] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 2.57), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = lambda, mm = 10, ss = Inf)
+	
+plot.vec[2] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 3), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = lambda, mm = 20, ss = Inf)
+	
+plot.vec[3] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)
+	
+plot.vec[4] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = lambda, mm = 100, ss = Inf)	
+	
+plot.vec[5] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = lambda, mm = 200, ss = Inf)	
+	
+plot.vec[6] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)	
 
 
 	
@@ -189,7 +189,7 @@ EWMA.CARL.MC.integral <- function(xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt 
 #debug(EWMA.CARL.MC.Q)
 
 EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, mm = 100, ss = Inf, tt = 3, reltol = 1e-6){
+	ymin = 0, ymax = 1, lambda = 0.2, mm = 100, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6){
 
 		root.finding <- function(ARL0, xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt, reltol){
 		
@@ -197,57 +197,98 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 		
 		}
 	
-		uniroot(root.finding, interval = interval, ARL0 = ARL0, xmin = xmin, xmax = xmax,
+		uniroot(root.finding, interval = interval, tol = tol, ARL0 = ARL0, xmin = xmin, xmax = xmax,
 			ymin = ymin, ymax = ymax, lambda = lambda, mm = mm, ss = ss, tt = tt, reltol = reltol)$root
 	
 }
 
-EWMA.get.cc.MC(ARL0 = 370, interval = c(2.3, 3), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, mm = 100, ss = Inf, tt = 50, reltol = 1e-6)
+EWMA.get.cc.MC(ARL0 = 370, interval = c(2.3, 3.5), xmin = 0, xmax = 1, 
+		ymin = 0, ymax = 1, lambda = 0.8, mm = 100, ss = Inf, tt = 50, reltol = 1e-6)
 
 ####################################################################################################################################################
 
 EWMA.sim <- function(L, lambda, mm, z.sim = 1000, sim = 1000){
-
-	PH1.X <- matrix(rnorm(sim * mm), nrow = mm, ncol = sim)
-
-	mu.hat.vec <- colMeans(PH1.X)
-	
-	sigma.hat.vec <- sqrt(diag(var(PH1.X)))
-	
-	sigma.hat.vec <- sigma.hat.vec / c4.f(m - 1)
 	
 	RL.vec <- rep(NA, sim)
-
-	mu.hat.vec <- rnorm(sim)
-	
-	sigma2.hat.vec <- rchisq(sim, mm - 1)
-	
-	Z.vec <- rep(NA, z.sim)
 	
 	for (ii in 1:sim){
+
+		PH1.X.bar <- rnorm(mm)
+	
+		mu.hat <- mean(PH1.X.bar)
+		sigma.hat <- sd(PH1.X.bar) / c4.f(mm - 1)
 	
 		RL <- 0
 		RL.done <- 0
 		
-		X.bar <- rnorm(z.sim, mu.hat.vec[ii], sigma2.hat.vec)
-	
-		for (jj in 1:z.sim) {
+		Z.vec <- rep(NA, z.sim)
 		
-			if (ii > 1) {
+		while (RL.done == 0){
 		
-				Z.vec[ii] <- 
+			X.bar.vec <- rnorm(z.sim, mu.hat, sigma.hat)
 		
+			Z.0 <- ifelse(RL == 0, mu.hat, Z.vec[z.sim])
+		
+			for (jj in 1:z.sim) {
+
+				Z.vec[jj] <- lambda * X.bar.vec[jj] + (1 - lambda) * Z.0
+				
+				Z.0 <- Z.vec[jj]
+			
+			}
+			
+			LCL <- mu.hat - L * sigma.hat * sqrt(lambda / (2 - lambda))
+			UCL <- mu.hat + L * sigma.hat * sqrt(lambda / (2 - lambda))
+			
+			IC <- LCL <= Z.vec & Z.vec <= UCL
+			
+			if (length(which(IC)) == z.sim) {
+			
+				RL <- RL + z.sim
+			
 			} else {
 			
-				
+				RL <- RL + which.min(IC)
+				RL.done <- 1
 			
 			}
 		
 		}
-	
 		
-	
+		RL.vec[ii] <- RL
+		
 	}
-}	
 	
+	res <- list(ARL = mean(RL.vec), SDRL = sd(RL.vec), RL = RL.vec)
+	
+	return(res)
+	
+}	
+
+#debug(EWMA.sim)
+
+a <- EWMA.sim(2.983686, 0.8, 300, z.sim = 1000, sim = 10000)
+
+l.vec <- c(
+	2.369803, 2.681122, 2.980097, 2.939529, 2.970110, 2.980097
+)
+
+lambda <- c(0.9)
+lambda.vec <- rep(lambda, 6)
+
+mm.vec <- c(10, 20, 50, 100, 200, 300)
+
+b.matrix <- matrix(NA, ncol = 6, nrow = 100)
+
+for (j in 1:100){
+
+	b.vec <- rep(NA, 6)
+
+	for (i in 1:6){
+		b.vec[i] <- EWMA.sim(l.vec[i], lambda.vec[i], mm.vec[i], z.sim = 1000, sim = 10000)$ARL
+	}
+	
+	b.matrix[j, ] <- b.vec
+
+
+}
