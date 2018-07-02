@@ -14,7 +14,7 @@ c4.f <- function(nu) sqrt(2 / nu) * 1 / beta(nu / 2, 1 / 2) * sqrt(pi)          
 cs.f <- function(lambda, ss){
 
 	numer <- 1 - (1 - lambda) ^ ss
-	denom <- lambda / (2 - lambda) / (1 - (1 - lambda) ^ (2 * ss))
+	denom <- lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))
 	
 	numer / denom
 
