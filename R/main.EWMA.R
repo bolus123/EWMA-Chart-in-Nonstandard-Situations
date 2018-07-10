@@ -181,6 +181,10 @@ EWMA.get.cc.MC.TRAD <- function(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 
 
 		root.finding <- function(ARL0, mu, sigma, L, lambda, ss, tt, reltol){
 		
+			ARLin <- EWMA.CARL.MC.TRAD.prod(mu, sigma, L, lambda, ss, tt)
+			
+			cat('ARLin:', ARLin, '\n')
+			
 			ARL0 - EWMA.CARL.MC.TRAD.prod(mu, sigma, L, lambda, ss, tt)
 		
 		}
