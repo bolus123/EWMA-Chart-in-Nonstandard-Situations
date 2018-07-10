@@ -65,27 +65,27 @@ EWMA.get.cc.DP <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 	
 }
 
-plot.vec <- rep(NA, 6)
-
-lambda <- 0.9
-
-plot.vec[1] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 2.57), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = lambda, mm = 10, ss = Inf)
-	
-plot.vec[2] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 3), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = lambda, mm = 20, ss = Inf)
-	
-plot.vec[3] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)
-	
-plot.vec[4] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = lambda, mm = 100, ss = Inf)	
-	
-plot.vec[5] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = lambda, mm = 200, ss = Inf)	
-	
-plot.vec[6] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)	
+#plot.vec <- rep(NA, 6)
+#
+#lambda <- 0.9
+#
+#plot.vec[1] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 2.57), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = lambda, mm = 10, ss = Inf)
+#	
+#plot.vec[2] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 3), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = lambda, mm = 20, ss = Inf)
+#	
+#plot.vec[3] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)
+#	
+#plot.vec[4] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = lambda, mm = 100, ss = Inf)	
+#	
+#plot.vec[5] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = lambda, mm = 200, ss = Inf)	
+#	
+#plot.vec[6] <- EWMA.get.cc.DP(ARL0 = 370, interval = c(1, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = lambda, mm = 300, ss = Inf)	
 
 
 	
@@ -110,6 +110,90 @@ EWMA.ARLin.performance(L = 2.963359, lambda = 0.2, mm = 20, ss = Inf, sim = 1000
 
 ####################################################################################################################################################
 
+EWMA.CARL.MC.Q.TRAD <- function(mu, sigma, L, lambda, ss, tt) {
+
+	nn <- 2 * tt + 1
+
+	Q <- matrix(NA, ncol = nn, nrow = nn)
+	
+	for (l in 1:nn){
+	
+		ll <- l - (tt + 1)
+	
+		for (k in 1:nn){
+		
+			kk <- k - (tt + 1)
+		
+			Q[l, k] <- pnorm(mu / sigma + ( 2 * lambda * tt + lambda + 2 * ll - 2 * (1 - lambda) * kk  + 1) / nn / lambda * L * 
+				sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss)))) - 
+				pnorm(mu / sigma + (2 * lambda * tt + lambda + 2 * ll - 2 * (1 - lambda) * kk - 1) / nn / lambda * L * 
+				sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))))
+		
+		}
+	
+	}
+	
+	Q
+
+}
+
+
+
+EWMA.CARL.MC.xi <- function(tt, mid = tt + 1) {
+
+	nn <- 2 * tt + 1
+	
+	xi.vec <- rep(0, nn)
+	
+	xi.vec[mid] <- 1
+
+	xi.vec
+
+}
+
+EWMA.CARL.MC.TRAD.prod <- function(mu, sigma, L, lambda, ss, tt){
+
+	QQ <- EWMA.CARL.MC.Q.TRAD(mu, sigma, L, lambda, ss, tt) 
+	xi.vec <- EWMA.CARL.MC.xi(tt)
+	xi.vec <- matrix(xi.vec, nrow = 1, ncol = 2 * tt + 1)
+	I.matrix <- diag(2 * tt + 1)
+	
+	one.vec <- matrix(1, ncol = 1, nrow = 2 * tt + 1)
+	
+	inv.matrix <- try(solve(I.matrix - QQ), silent = TRUE)
+	
+	if (class(inv.matrix) == 'try-error') {
+	
+		cat('try-error', '\n')
+		inv.matrix <- MASS::ginv(I.matrix - QQ)
+	
+	}
+	
+	xi.vec %*% inv.matrix %*% one.vec
+
+}
+
+#EWMA.CARL.MC.TRAD.prod(mu = 0, sigma = 1, L = 3, lambda = 1, ss = Inf, tt = 1000)
+
+
+EWMA.get.cc.MC.TRAD <- function(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 1, 
+	lambda = 0.2, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6){
+
+		root.finding <- function(ARL0, mu, sigma, L, lambda, ss, tt, reltol){
+		
+			ARL0 - EWMA.CARL.MC.TRAD.prod(mu, sigma, L, lambda, ss, tt)
+		
+		}
+	
+		uniroot(root.finding, interval = interval, tol = tol, ARL0 = ARL0, mu = mu, sigma = sigma, 
+			lambda = lambda, ss = ss, tt = tt, reltol = reltol)$root
+	
+}
+
+#EWMA.get.cc.MC.TRAD(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 1, 
+#	lambda = 0.2, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6)
+
+
 EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt) {
 
 	nn <- 2 * tt + 1
@@ -124,10 +208,10 @@ EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt) {
 		
 			kk <- k - (tt + 1)
 		
-			Q[l, k] <- pnorm(qnorm(U) / sqrt(mm) + (2 * ll - (1 - lambda) * 2 * kk + 1) / nn / lambda * 
-				(L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) )) - 
-				pnorm(qnorm(U) / sqrt(mm) + (2 * ll - (1 - lambda) * 2 * kk - 1) / nn / lambda * 
-				(L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) ))
+			Q[l, k] <- pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll + 1) / nn * 
+				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) )) - 
+				pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll - 1) / nn * 
+				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) )) 
 		
 		}
 	
@@ -201,6 +285,8 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 			ymin = ymin, ymax = ymax, lambda = lambda, mm = mm, ss = ss, tt = tt, reltol = reltol)$root
 	
 }
+
+#setMKLthreads(getMKLthreads() - 1)
 
 EWMA.get.cc.MC(ARL0 = 370, interval = c(2.3, 3.5), xmin = 0, xmax = 1, 
 		ymin = 0, ymax = 1, lambda = 0.8, mm = 100, ss = Inf, tt = 50, reltol = 1e-6)
