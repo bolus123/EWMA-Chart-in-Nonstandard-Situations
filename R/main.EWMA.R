@@ -106,7 +106,7 @@ EWMA.ARLin.performance <- function(L, lambda, mm, ss, sim = 10000){
 	
 }
 
-EWMA.ARLin.performance(L = 2.963359, lambda = 0.2, mm = 20, ss = Inf, sim = 1000000)
+#EWMA.ARLin.performance(L = 2.963359, lambda = 0.2, mm = 20, ss = Inf, sim = 1000000)
 
 ####################################################################################################################################################
 
