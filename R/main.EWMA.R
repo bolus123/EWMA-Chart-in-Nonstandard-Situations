@@ -297,88 +297,89 @@ EWMA.get.cc.MC(ARL0 = 370, interval = c(2.3, 3.5), xmin = 0, xmax = 1,
 
 ####################################################################################################################################################
 
-EWMA.sim <- function(L, lambda, mm, z.sim = 1000, sim = 1000){
-	
-	RL.vec <- rep(NA, sim)
-	
-	for (ii in 1:sim){
-
-		PH1.X.bar <- rnorm(mm)
-	
-		mu.hat <- mean(PH1.X.bar)
-		sigma.hat <- sd(PH1.X.bar) / c4.f(mm - 1)
-	
-		RL <- 0
-		RL.done <- 0
-		
-		Z.vec <- rep(NA, z.sim)
-		
-		while (RL.done == 0){
-		
-			X.bar.vec <- rnorm(z.sim, mu.hat, sigma.hat)
-		
-			Z.0 <- ifelse(RL == 0, mu.hat, Z.vec[z.sim])
-		
-			for (jj in 1:z.sim) {
-
-				Z.vec[jj] <- lambda * X.bar.vec[jj] + (1 - lambda) * Z.0
-				
-				Z.0 <- Z.vec[jj]
-			
-			}
-			
-			LCL <- mu.hat - L * sigma.hat * sqrt(lambda / (2 - lambda))
-			UCL <- mu.hat + L * sigma.hat * sqrt(lambda / (2 - lambda))
-			
-			IC <- LCL <= Z.vec & Z.vec <= UCL
-			
-			if (length(which(IC)) == z.sim) {
-			
-				RL <- RL + z.sim
-			
-			} else {
-			
-				RL <- RL + which.min(IC)
-				RL.done <- 1
-			
-			}
-		
-		}
-		
-		RL.vec[ii] <- RL
-		
-	}
-	
-	res <- list(ARL = mean(RL.vec), SDRL = sd(RL.vec), RL = RL.vec)
-	
-	return(res)
-	
-}	
-
-#debug(EWMA.sim)
-
-a <- EWMA.sim(2.983686, 0.8, 300, z.sim = 1000, sim = 10000)
-
-l.vec <- c(
-	2.369803, 2.681122, 2.980097, 2.939529, 2.970110, 2.980097
-)
-
-lambda <- c(0.9)
-lambda.vec <- rep(lambda, 6)
-
-mm.vec <- c(10, 20, 50, 100, 200, 300)
-
-b.matrix <- matrix(NA, ncol = 6, nrow = 100)
-
-for (j in 1:100){
-
-	b.vec <- rep(NA, 6)
-
-	for (i in 1:6){
-		b.vec[i] <- EWMA.sim(l.vec[i], lambda.vec[i], mm.vec[i], z.sim = 1000, sim = 10000)$ARL
-	}
-	
-	b.matrix[j, ] <- b.vec
-
-
-}
+#EWMA.sim <- function(L, lambda, mm, z.sim = 1000, sim = 1000){
+#	
+#	RL.vec <- rep(NA, sim)
+#	
+#	for (ii in 1:sim){
+#
+#		PH1.X.bar <- rnorm(mm)
+#	
+#		mu.hat <- mean(PH1.X.bar)
+#		sigma.hat <- sd(PH1.X.bar) / c4.f(mm - 1)
+#	
+#		RL <- 0
+#		RL.done <- 0
+#		
+#		Z.vec <- rep(NA, z.sim)
+#		
+#		while (RL.done == 0){
+#		
+#			X.bar.vec <- rnorm(z.sim, mu.hat, sigma.hat)
+#		
+#			Z.0 <- ifelse(RL == 0, mu.hat, Z.vec[z.sim])
+#		
+#			for (jj in 1:z.sim) {
+#
+#				Z.vec[jj] <- lambda * X.bar.vec[jj] + (1 - lambda) * Z.0
+#				
+#				Z.0 <- Z.vec[jj]
+#			
+#			}
+#			
+#			LCL <- mu.hat - L * sigma.hat * sqrt(lambda / (2 - lambda))
+#			UCL <- mu.hat + L * sigma.hat * sqrt(lambda / (2 - lambda))
+#			
+#			IC <- LCL <= Z.vec & Z.vec <= UCL
+#			
+#			if (length(which(IC)) == z.sim) {
+#			
+#				RL <- RL + z.sim
+#			
+#			} else {
+#			
+#				RL <- RL + which.min(IC)
+#				RL.done <- 1
+#			
+#			}
+#		
+#		}
+#		
+#		RL.vec[ii] <- RL
+#		
+#	}
+#	
+#	res <- list(ARL = mean(RL.vec), SDRL = sd(RL.vec), RL = RL.vec)
+#	
+#	return(res)
+#	
+#}	
+#
+##debug(EWMA.sim)
+#
+#a <- EWMA.sim(2.983686, 0.8, 300, z.sim = 1000, sim = 10000)
+#
+#l.vec <- c(
+#	2.369803, 2.681122, 2.980097, 2.939529, 2.970110, 2.980097
+#)
+#
+#lambda <- c(0.9)
+#lambda.vec <- rep(lambda, 6)
+#
+#mm.vec <- c(10, 20, 50, 100, 200, 300)
+#
+#b.matrix <- matrix(NA, ncol = 6, nrow = 100)
+#
+#for (j in 1:100){
+#
+#	b.vec <- rep(NA, 6)
+#
+#	for (i in 1:6){
+#		b.vec[i] <- EWMA.sim(l.vec[i], lambda.vec[i], mm.vec[i], z.sim = 1000, sim = 10000)$ARL
+#	}
+#	
+#	b.matrix[j, ] <- b.vec
+#
+#
+#}
+#
