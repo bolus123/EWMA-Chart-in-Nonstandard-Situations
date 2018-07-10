@@ -246,14 +246,16 @@ EWMA.CARL.MC.integrand <- function(U, V, L, lambda, mm, ss, tt){
 	
 	one.vec <- matrix(1, ncol = 1, nrow = 2 * tt + 1)
 	
-	inv.matrix <- try(solve(I.matrix - QQ), silent = TRUE)
+	inv.matrix <- solve(I.matrix - QQ)
 	
-	if (class(inv.matrix) == 'try-error') {
+	#inv.matrix <- try(solve(I.matrix - QQ), silent = TRUE)
 	
-		cat('try-error', '\n')
-		inv.matrix <- MASS::ginv(I.matrix - QQ)
+	#if (class(inv.matrix) == 'try-error') {
 	
-	}
+	#	cat('try-error', '\n')
+	#	inv.matrix <- MASS::ginv(I.matrix - QQ)
+	
+	#}
 	
 	xi.vec %*% inv.matrix %*% one.vec
 
@@ -297,7 +299,7 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 #setMKLthreads(getMKLthreads() - 1)
 
 EWMA.get.cc.MC(ARL0 = 370, interval = c(2.3, 3.5), xmin = 0, xmax = 1, 
-		ymin = 0, ymax = 1, lambda = 0.8, mm = 100, ss = Inf, tt = 50, reltol = 1e-6)
+		ymin = 0, ymax = 1, lambda = 0.8, mm = 100, ss = Inf, tt = 10, reltol = 1e-6)
 
 ####################################################################################################################################################
 
