@@ -185,7 +185,7 @@ EWMA.get.cc.MC.TRAD <- function(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 
 			
 			cat('ARLin:', ARLin, '\n')
 			
-			ARL0 - EWMA.CARL.MC.TRAD.prod(mu, sigma, L, lambda, ss, tt)
+			ARL0 - ARLin
 		
 		}
 	
@@ -281,7 +281,11 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 
 		root.finding <- function(ARL0, xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt, reltol){
 		
-			ARL0 - EWMA.CARL.MC.integral(xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt, reltol)
+			ARLin <- EWMA.CARL.MC.integral(xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt, reltol)
+			
+			cat('L:', L, ', ARLin:', ARLin, '\n')
+		
+			ARL0 - ARLin
 		
 		}
 	
