@@ -359,10 +359,12 @@ EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
 	LCL <- -UCL
 	v <- 2 * tt + 1
 	tau <- UCL / v
-	S <- numeric(length(z))
-	for (j in 1:length(z)){
-		S[j] <- LCL + (2 * (v + z[j] + 1) * tau)
-	}
+	
+	S <- LCL + (2 * (tt + z ) + 1) * tau)
+	#S <- numeric(length(z))
+	#for (j in 1:length(z)){
+	#	S[j] <- LCL + (2 * (v + z[j] + 1) * tau)
+	#}
 	
 	Y <- matrix(0, 1, v)
 	Y[v/2 + 1] <- 1
@@ -475,5 +477,5 @@ EWMA.get.cc.Conditional.MC <- function(p0 = 0.05, interval = c(1, 5), xmin = 0, 
 	
 }
 
-EWMA.get.cc.Conditional.MC(p0 = 0.1, interval = c(1, 5), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 100, ss = Inf, tt = 10, reltol = 1e-6, tol = 1e-6)
+EWMA.get.cc.Conditional.MC(p0 = 0.1, interval = c(2.3, 3.3), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 100, ss = Inf, tt = 5, reltol = 1e-6, tol = 1e-6)
