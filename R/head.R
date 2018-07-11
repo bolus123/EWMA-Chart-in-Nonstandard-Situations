@@ -351,6 +351,7 @@ EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt) {
 	
 		#for (k in 1:nn){
 		
+<<<<<<< HEAD
 			#kk <- k - (tt + 1)
 		
 			#Q[l, k] <- pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll + 1) / nn * 
@@ -365,6 +366,30 @@ EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt) {
 				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / sqrt(mm * (5 - 1)) )) 
 		
 		#}
+=======
+	Y %*% solve(I - P) %*% matrix(1, v, 1)
+
+}
+
+
+EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
+	n <- 5
+	mu <- 0
+	sigma <- sqrt(n)
+	delta <- 0
+	tt <- 100
+	z <- seq(-tt, tt, 1)
+	UCL <- L * sqrt(lambda / (2 - lambda))
+	LCL <- -UCL
+	v <- 2 * tt + 1
+	tau <- UCL / v
+	
+	S <- LCL + (2 * (tt + z ) + 1) * tau)
+	#S <- numeric(length(z))
+	#for (j in 1:length(z)){
+	#	S[j] <- LCL + (2 * (v + z[j] + 1) * tau)
+	#}
+>>>>>>> 1e98226cfebacfde51f335aa56e0c8928640eb85
 	
 	}
 	
@@ -445,5 +470,10 @@ EWMA.get.cc.Conditional.MC <- function(p0 = 0.05, interval = c(1, 5), xmin = 0, 
 	
 }
 
+<<<<<<< HEAD
 EWMA.get.cc.Conditional.MC(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
 	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
+=======
+EWMA.get.cc.Conditional.MC(p0 = 0.1, interval = c(2.3, 3.3), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 100, ss = Inf, tt = 5, reltol = 1e-6, tol = 1e-6)
+>>>>>>> 1e98226cfebacfde51f335aa56e0c8928640eb85
