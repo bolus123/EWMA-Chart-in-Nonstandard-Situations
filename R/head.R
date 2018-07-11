@@ -297,120 +297,90 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 }
 
 ####################################################################################################################################################
+#U <- 0.5
+#V <- 0.5
 
-
-EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
-	LCL <- qnorm(U) / sqrt(mm) - 
-		L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))) * sqrt(qchisq(V, mm - 1) / (mm - 1)) / c4.f(mm - 1)
-	UCL <- qnorm(U) / sqrt(mm) + 
-		L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))) * sqrt(qchisq(V, mm - 1) / (mm - 1)) / c4.f(mm - 1)
-	
-	v <- 2 * tt + 1
-	tau <- (UCL - LCL) / v
-	
-	z <- seq(-tt, tt, 1)
-	S <- LCL + (2 * (v + z + 1) * tau)
-	
-	n <- 5
-	mu <- 0
-	sigma <- sqrt(n)
-	delta <- 0
-	tt <- 100
-	z <- seq(-tt, tt, 1)
-	UCL <- L * sqrt(lambda / (2 - lambda))
-	LCL <- -UCL
-	
-	tau <- UCL / v
-	S <- numeric(length(z))
-	for (j in 1:length(z)){
-		S[j] <- LCL + (2 * (tt + z[j] + 1) * tau)
-	}
-	
-	Y <- matrix(0, 1, v)
-	Y[tt/2 + 1] <- 1
-	P <- diag(v)
-	I <- diag(v)
-	Q <- sqrt(qchisq(V, mm * (n - 1)) / mm / (n - 1))
-	Z <- qnorm(U)
-	#Q <- sqrt(rchisq(br, m * (n - 1)) / (m * (n - 1)))
-	#Z <- rnorm(br)
-	
-	for (l in 1:v){
-		for (k in 1:v){
-			A <- Q * ((S[k] + tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
-			B <- Q * ((S[k] - tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
-			P[l, k] <- pnorm(A, mu, 1) - pnorm(B, mu, 1)
-		}
-	}
-		
-	Y %*% solve(I - P) %*% matrix(1, v, 1)
-
-}
-
-
-EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
-	n <- 5
-	mu <- 0
-	sigma <- sqrt(n)
-	delta <- 0
-	tt <- 100
-	z <- seq(-tt, tt, 1)
-	UCL <- L * sqrt(lambda / (2 - lambda))
-	LCL <- -UCL
-	v <- 2 * tt + 1
-	tau <- UCL / v
-	S <- numeric(length(z))
-	for (j in 1:length(z)){
-		S[j] <- LCL + (2 * (v + z[j] + 1) * tau)
-	}
-	
-	Y <- matrix(0, 1, v)
-	Y[v/2 + 1] <- 1
-	P <- diag(v)
-	I <- diag(v)
-	Q <- sqrt(qchisq(V, mm * (n - 1)) / mm / (n - 1))
-	Z <- qnorm(U)
-	#Q <- sqrt(rchisq(br, m * (n - 1)) / (m * (n - 1)))
-	#Z <- rnorm(br)
-	
-	for (l in 1:v){
-		for (k in 1:v){
-			A <- Q * ((S[k] + tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
-			B <- Q * ((S[k] - tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
-			P[l, k] <- pnorm(A, mu, 1) - pnorm(B, mu, 1)
-		}
-	}
-		
-	Y %*% solve(I - P) %*% matrix(1, v, 1)
-
-}
-
-#EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt) {
 #
-#	nn <- 2 * tt + 1
-#
-#	Q <- matrix(NA, ncol = nn, nrow = nn)
+#EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
+#	n <- 5
+#	mu <- 0
+#	sigma <- sqrt(n)
+#	delta <- 0
+#	#tt <- 100
+#	z <- seq(-tt, tt, 1)
+#	UCL <- L * sqrt(lambda / (2 - lambda))
+#	LCL <- -UCL
+#	v <- 2 * tt + 1
+#	tau <- UCL / v
 #	
-#	for (l in 1:nn){
+#	S <- LCL + (2 * (tt + z) + 1) * tau
 #	
-#		ll <- l - (tt + 1)
+#	Y <- matrix(0, 1, v)
+#	Y[tt/2 + 1] <- 1
+#	P <- diag(v)
+#	I <- diag(v)
+#	Q <- sqrt(qchisq(V, mm * (n - 1)) / mm / (n - 1))
+#	Z <- qnorm(U)
+#	#Q <- sqrt(rchisq(br, m * (n - 1)) / (m * (n - 1)))
+#	#Z <- rnorm(br)
 #	
-#		for (k in 1:nn){
-#		
-#			kk <- k - (tt + 1)
-#		
-#			Q[l, k] <- pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll + 1) / nn * 
-#				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / c4.f(mm * (5 - 1)) / sqrt(mm * (5 - 1)) )) - 
-#				pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll - 1) / nn * 
-#				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / c4.f(mm * (5 - 1)) / sqrt(mm * (5 - 1)) )) 
-#		
-#		}
-#	
+#	for (l in 1:v){
+#		#for (k in 1:v){
+#			A <- Q * ((S + tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
+#			B <- Q * ((S - tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
+#			P[l, ] <- pnorm(A, mu, 1) - pnorm(B, mu, 1)
+#		#}
 #	}
-#	
-#	Q
-#	
+#		
+#	Y %*% solve(I - P) %*% matrix(1, v, 1)
+#
 #}
+#
+
+EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt) {
+
+	nn <- 2 * tt + 1
+
+	Q <- matrix(NA, ncol = nn, nrow = nn)
+	
+	zz <- seq(-tt, tt, 1)
+	
+	for (l in 1:nn){
+	
+		ll <- l - (tt + 1)
+	
+		#for (k in 1:nn){
+		
+			#kk <- k - (tt + 1)
+		
+			#Q[l, k] <- pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll + 1) / nn * 
+			#	(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / c4.f(mm * (5 - 1)) / sqrt(mm * (5 - 1)) )) - 
+			#	pnorm(qnorm(U) / sqrt(mm) + (2 * kk - (1 - lambda) * 2 * ll - 1) / nn * 
+			#	(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / c4.f(mm * (5 - 1)) / sqrt(mm * (5 - 1)) )) 
+				
+				
+			Q[l, ] <- pnorm(qnorm(U) / sqrt(mm) + (2 * zz - (1 - lambda) * 2 * ll + 1) / nn * 
+				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / sqrt(mm * (5 - 1)) )) - 
+				pnorm(qnorm(U) / sqrt(mm) + (2 * zz - (1 - lambda) * 2 * ll - 1) / nn * 
+				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm * (5 - 1))) / sqrt(mm * (5 - 1)) )) 
+		
+		#}
+	
+	}
+	
+	I.matrix <- diag(nn)
+	one.vec <- matrix(1, ncol = 1, nrow = nn)
+	xi.vec <- matrix(0, ncol = nn, nrow = 1)
+	xi.vec[1, tt / 2 + 1] <- 1
+	
+	xi.vec %*% solve(I.matrix - Q) %*% one.vec
+	
+}
+
+#debug(EWMA.CARL.MC.Q1)
+#EWMA.CARL.MC.Q1(U, V, 3.065, lambda = 0.2, mm = 300, ss = Inf, tt = 3)
+
+#EWMA.CARL.MC.Q2(U, V, 3.065, lambda = 0.2, mm = 300, ss = Inf, tt = 3)
 
 
 EWMA.CARL.Conditional.MC.integrand <- function(U, V, L, lambda, eplison, ARL0, mm, ss, tt){
@@ -446,7 +416,7 @@ EWMA.CARL.Conditional.MC.integral <- function(xmin, xmax, ymin, ymax, L, lambda,
 	#cat(m, '\n')
 
 	integral2(EWMA.CARL.Conditional.MC.integrand, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, 
-		singular = TRUE, vectorized = FALSE, L = L, lambda = lambda, eplison = eplison, ARL0 = ARL0, 
+		singular = FALSE, vectorized = FALSE, L = L, lambda = lambda, eplison = eplison, ARL0 = ARL0, 
 		mm = mm, ss = ss, tt = tt, reltol = reltol)$Q
 
 }
@@ -475,5 +445,5 @@ EWMA.get.cc.Conditional.MC <- function(p0 = 0.05, interval = c(1, 5), xmin = 0, 
 	
 }
 
-EWMA.get.cc.Conditional.MC(p0 = 0.1, interval = c(1, 5), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 100, ss = Inf, tt = 10, reltol = 1e-6, tol = 1e-6)
+EWMA.get.cc.Conditional.MC(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
