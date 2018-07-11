@@ -298,6 +298,56 @@ EWMA.get.cc.MC <- function(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1,
 
 ####################################################################################################################################################
 
+
+EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
+	LCL <- qnorm(U) / sqrt(mm) - 
+		L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))) * sqrt(qchisq(V, mm - 1) / (mm - 1)) / c4.f(mm - 1)
+	UCL <- qnorm(U) / sqrt(mm) + 
+		L * sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))) * sqrt(qchisq(V, mm - 1) / (mm - 1)) / c4.f(mm - 1)
+	
+	v <- 2 * tt + 1
+	tau <- (UCL - LCL) / v
+	
+	z <- seq(-tt, tt, 1)
+	S <- LCL + (2 * (v + z + 1) * tau)
+	
+	n <- 5
+	mu <- 0
+	sigma <- sqrt(n)
+	delta <- 0
+	tt <- 100
+	z <- seq(-tt, tt, 1)
+	UCL <- L * sqrt(lambda / (2 - lambda))
+	LCL <- -UCL
+	
+	tau <- UCL / v
+	S <- numeric(length(z))
+	for (j in 1:length(z)){
+		S[j] <- LCL + (2 * (tt + z[j] + 1) * tau)
+	}
+	
+	Y <- matrix(0, 1, v)
+	Y[tt/2 + 1] <- 1
+	P <- diag(v)
+	I <- diag(v)
+	Q <- sqrt(qchisq(V, mm * (n - 1)) / mm / (n - 1))
+	Z <- qnorm(U)
+	#Q <- sqrt(rchisq(br, m * (n - 1)) / (m * (n - 1)))
+	#Z <- rnorm(br)
+	
+	for (l in 1:v){
+		for (k in 1:v){
+			A <- Q * ((S[k] + tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
+			B <- Q * ((S[k] - tau - (1 - lambda) * S[l]) / lambda) - ((sqrt(n) * delta / sigma) + (Z / sqrt(mm)))
+			P[l, k] <- pnorm(A, mu, 1) - pnorm(B, mu, 1)
+		}
+	}
+		
+	Y %*% solve(I - P) %*% matrix(1, v, 1)
+
+}
+
+
 EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
 	n <- 5
 	mu <- 0
@@ -311,11 +361,11 @@ EWMA.CARL.MC.Q1 <- function(U, V, L, lambda, mm, ss, tt){
 	tau <- UCL / v
 	S <- numeric(length(z))
 	for (j in 1:length(z)){
-		S[j] <- LCL + (2 * (tt + z[j] + 1) * tau)
+		S[j] <- LCL + (2 * (v + z[j] + 1) * tau)
 	}
 	
 	Y <- matrix(0, 1, v)
-	Y[tt/2 + 1] <- 1
+	Y[v/2 + 1] <- 1
 	P <- diag(v)
 	I <- diag(v)
 	Q <- sqrt(qchisq(V, mm * (n - 1)) / mm / (n - 1))
