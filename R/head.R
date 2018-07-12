@@ -616,17 +616,17 @@ EWMA.get.cc.Conditional.MC2 <- function(p0 = 0.05, interval = c(1, 5), xmin = 0,
 }
 
 
-EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 50, reltol = 1e-6, tol = 1e-6)
-	
-EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
-	
-EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 150, reltol = 1e-6, tol = 1e-6)
-	
-EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 200, reltol = 1e-6, tol = 1e-6)
+#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 50, reltol = 1e-6, tol = 1e-6)
+#	
+#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
+#	
+#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 150, reltol = 1e-6, tol = 1e-6)
+#	
+#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 200, reltol = 1e-6, tol = 1e-6)
 
 #EWMA.get.cc.Conditional.MC2(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
 #	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 20, reltol = 1e-6, tol = 1e-6)
