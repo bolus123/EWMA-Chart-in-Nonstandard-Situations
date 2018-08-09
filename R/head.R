@@ -200,7 +200,7 @@ EWMA.get.cc.MC.TRAD <- function(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 
 #	lambda = 0.2, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6)
 
 
-EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt) {
+EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt, delta = 0) {
 
 	nn <- 2 * tt + 1
 
@@ -217,9 +217,9 @@ EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt) {
 		#	kk <- k - (tt + 1)
 		
 			Q[l, ] <- pnorm(qnorm(U) / sqrt(mm) + (2 * zz - (1 - lambda) * 2 * ll + 1) / nn * 
-				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) )) - 
+				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) ) - delta) - 
 				pnorm(qnorm(U) / sqrt(mm) + (2 * zz - (1 - lambda) * 2 * ll - 1) / nn * 
-				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) )) 
+				(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) ) - delta) 
 		
 		#}
 	
@@ -241,9 +241,9 @@ EWMA.CARL.MC.xi <- function(tt, mid = tt + 1) {
 
 }
 
-EWMA.CARL.MC.integrand <- function(U, V, L, lambda, mm, ss, tt){
+EWMA.CARL.MC.integrand <- function(U, V, L, lambda, mm, ss, tt, delta = 0){
 
-	QQ <- EWMA.CARL.MC.Q(U, V, L, lambda, mm, ss, tt)
+	QQ <- EWMA.CARL.MC.Q(U, V, L, lambda, mm, ss, tt, delta)
 	xi.vec <- EWMA.CARL.MC.xi(tt)
 	xi.vec <- matrix(xi.vec, nrow = 1, ncol = 2 * tt + 1)
 	I.matrix <- diag(2 * tt + 1)
@@ -267,12 +267,12 @@ EWMA.CARL.MC.integrand <- function(U, V, L, lambda, mm, ss, tt){
 
 #EWMA.CARL.MC(0.5, 0.5, 3, 0.2, 100, Inf, 5)
 
-EWMA.CARL.MC.integral <- function(xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt = 3, reltol = 1e-6){
+EWMA.CARL.MC.integral <- function(xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt = 3, delta = 0, reltol = 1e-6){
 
 	#cat(m, '\n')
 
 	integral2(EWMA.CARL.MC.integrand, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, 
-		singular = TRUE, vectorized = FALSE, L = L, lambda = lambda, mm = mm, ss = ss, tt = tt, reltol = reltol)$Q
+		singular = TRUE, vectorized = FALSE, L = L, lambda = lambda, mm = mm, ss = ss, tt = tt, delta = delta, reltol = reltol)$Q
 
 }
 
@@ -617,17 +617,23 @@ EWMA.get.cc.Conditional.MC2 <- function(p0 = 0.05, interval = c(1, 5), xmin = 0,
 
 
 #EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 50, reltol = 1e-6, tol = 1e-6)
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 50, reltol = 1e-6, tol = 1e-6) # 2.955695
+#	
+#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1,  
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6) # 2.955416
 #	
 #EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 150, reltol = 1e-6, tol = 1e-6) # 2.955383
 #	
-#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 150, reltol = 1e-6, tol = 1e-6)
-#	
-#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
-#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 200, reltol = 1e-6, tol = 1e-6)
+#EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1,  
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 200, reltol = 1e-6, tol = 1e-6) # 2.955378
 
 #EWMA.get.cc.Conditional.MC2(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1, 
 #	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 370, mm = 300, ss = Inf, tt = 20, reltol = 1e-6, tol = 1e-6)
 #
+
+#EWMA.get.cc.Conditional.MC1 <- Vectorize(EWMA.get.cc.Conditional.MC1, vectorize.args = c('mm'))
+#mm.vec <- c(30, 50, 100, 300, 1000)
+
+#a <- EWMA.get.cc.Conditional.MC1(p0 = 0.1, interval = c(2.3, 4), xmin = 0, xmax = 1,  
+#	ymin = 0, ymax = 1, lambda = 0.2, eplison = 0.1, ARL0 = 500, mm = mm.vec, ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
