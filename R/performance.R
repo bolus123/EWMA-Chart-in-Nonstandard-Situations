@@ -1,4 +1,4 @@
-source('/home/yuhuiyao/Documents/Github/EWMA-Chart-in-Nonstandard-Situations/R/head.R')
+source('C:/Users/bolus/OneDrive/GitHub/EWMA-Chart-in-Nonstandard-Situations/R/head.R')
 
 pars <- matrix(
     c(
@@ -55,19 +55,12 @@ pars <- matrix(
 )
 
 max.dim <- dim(pars)[1]
-max.dim <- 2
+#max.dim <- 2
 
-delta.vec <- c(0, 0.1, 0.2, 0.3)
-rr <- length(delta.vec)
+result <- rep(NA, max.dim)
 
-result <- matrix(NA, ncol = rr, nrow = max.dim)
-jj <- 0
-for (delta in delta.vec) {
-	jj <- jj + 1
-	for (ii in 1:max.dim){
+for (ii in 1:max.dim){
 
-		result[ii, jj] <- EWMA.CARL.MC.integral(0, 1, 0, 1, pars[ii, 3], pars[ii, 2], pars[ii, 1], ss = Inf, tt = 100, delta = delta, reltol = 1e-6)
+    result[ii] <- EWMA.CARL.MC.integral(0, 1, 0, 1, pars[ii, 3], pars[ii, 2], pars[ii, 1], ss = Inf, tt = 100, reltol = 1e-6)
 
-	}
-	
 }
