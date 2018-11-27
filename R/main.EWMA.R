@@ -2,7 +2,7 @@ require(parallel)
 
 cl <- makeCluster(detectCores() - 1)
 
-clusterEvalQ(cl, source('/home/yuhuiyao/Documents/EWMA/code/head.R'))
+clusterEvalQ(cl, source('https://raw.githubusercontent.com/bolus123/EWMA-Chart-in-Nonstandard-Situations/master/R/head.R'))
 
 ######################################################################################################
 #head.addr <- '/home/yyao17/SPC/EWMA/ChartingConstants/Code/head.R'
