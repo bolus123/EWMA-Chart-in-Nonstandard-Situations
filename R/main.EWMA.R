@@ -1,9 +1,20 @@
+source('https://raw.githubusercontent.com/bolus123/EWMA-Chart-in-Nonstandard-Situations/master/R/head.R')
+
+EWMA.get.cc.MC(ARL0 = 370, interval = c(1, 5), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = in.vec[X, 1], mm = in.vec[X, 3], ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)
+    
+EWMA.get.cc.Conditional.MC(p0 = in.vec[X, 1], interval = c(1, 6.5), xmin = 0, xmax = 1, 
+	ymin = 0, ymax = 1, lambda = in.vec[X, 2], eplison = in.vec[X, 3], ARL0 = in.vec[X, 4], mm = in.vec[X, 5], ss = Inf, tt = 100, reltol = 1e-6, tol = 1e-6)   
+
+######################################################################################################
+
 require(parallel)
 
 cl <- makeCluster(detectCores() - 1)
 
-clusterEvalQ(cl, source('https://raw.githubusercontent.com/bolus123/EWMA-Chart-in-Nonstandard-Situations/master/R/head.R'))
-
+clusterEvalQ(cl, source('https://raw.githubusercontent.com/bolus123/EWMA-Chart-in-Nonstandard-Situations/master/R/head.R'))    
+    
+    
 ######################################################################################################
 #head.addr <- '/home/yyao17/SPC/EWMA/ChartingConstants/Code/head.R'
 ######################################################################################################
