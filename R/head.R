@@ -166,7 +166,7 @@ EWMA.CARL.MC.TRAD.prod <- function(mu, sigma, L, lambda, ss, tt){
 	
 	if (class(inv.matrix) == 'try-error') {
 	
-		cat('try-error', '\n')
+		#cat('try-error', '\n')
 		inv.matrix <- MASS::ginv(I.matrix - QQ)
 	
 	}
@@ -254,7 +254,7 @@ EWMA.CARL.MC.integrand <- function(U, V, L, lambda, mm, ss, tt, delta = 0){
 	
 	if (class(inv.matrix) == 'try-error') {
 	
-		cat('try-error', '\n')
+		#cat('try-error', '\n')
 		inv.matrix <- MASS::ginv(I.matrix - QQ)
 	
 	}
