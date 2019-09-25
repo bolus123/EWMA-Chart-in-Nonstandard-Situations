@@ -315,7 +315,7 @@ EWMA.CARL.Conditional.MC.integrand <- function(U, V, L, lambda, eplison, ARL0, m
 	
 	if (class(inv.matrix) == 'try-error') {
 	
-		cat('try-error', '\n')
+		#cat('try-error', '\n')
 		inv.matrix <- MASS::ginv(I.matrix - QQ)
 	
 	}
