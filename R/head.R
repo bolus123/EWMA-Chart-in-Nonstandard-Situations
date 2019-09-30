@@ -110,91 +110,91 @@ c4.f <- function(nu) sqrt(2 / nu) * 1 / beta(nu / 2, 1 / 2) * sqrt(pi)          
 
 ####################################################################################################################################################
 
-EWMA.CARL.MC.Q.TRAD <- function(mu, sigma, L, lambda, ss, tt) {
-
-	nn <- 2 * tt + 1
-
-	Q <- matrix(NA, ncol = nn, nrow = nn)
-	
-	zz <- seq(-tt, tt, 1)
-	
-	for (l in 1:nn){
-	
-		ll <- l - (tt + 1)
-	
-		for (k in 1:nn){
-		
-			kk <- k - (tt + 1)
-		
-			Q[l, k] <- pnorm(mu / sigma + ( 2 * lambda * tt + lambda + 2 * ll - 2 * (1 - lambda) * kk  + 1) / nn / lambda * L * 
-				sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss)))) - 
-				pnorm(mu / sigma + (2 * lambda * tt + lambda + 2 * ll - 2 * (1 - lambda) * kk - 1) / nn / lambda * L * 
-				sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))))
-		
-		}
-	
-	}
-	
-	Q
-
-}
-
-
-
-EWMA.CARL.MC.xi <- function(tt, mid = tt + 1) {
-
-	nn <- 2 * tt + 1
-	
-	xi.vec <- rep(0, nn)
-	
-	xi.vec[mid] <- 1
-
-	xi.vec
-
-}
-
-EWMA.CARL.MC.TRAD.prod <- function(mu, sigma, L, lambda, ss, tt){
-
-	QQ <- EWMA.CARL.MC.Q.TRAD(mu, sigma, L, lambda, ss, tt) 
-	xi.vec <- EWMA.CARL.MC.xi(tt)
-	xi.vec <- matrix(xi.vec, nrow = 1, ncol = 2 * tt + 1)
-	I.matrix <- diag(2 * tt + 1)
-	
-	one.vec <- matrix(1, ncol = 1, nrow = 2 * tt + 1)
-	
-	inv.matrix <- try(solve(I.matrix - QQ), silent = TRUE)
-	
-	if (class(inv.matrix) == 'try-error') {
-	
-		#cat('try-error', '\n')
-		inv.matrix <- MASS::ginv(I.matrix - QQ)
-	
-	}
-	
-	xi.vec %*% inv.matrix %*% one.vec
-
-}
-
-#EWMA.CARL.MC.TRAD.prod(mu = 0, sigma = 1, L = 3, lambda = 1, ss = Inf, tt = 1000)
-
-
-EWMA.get.cc.MC.TRAD <- function(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 1, 
-	lambda = 0.2, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6){
-
-		root.finding <- function(ARL0, mu, sigma, L, lambda, ss, tt, reltol){
-		
-			ARLin <- EWMA.CARL.MC.TRAD.prod(mu, sigma, L, lambda, ss, tt)
-			
-			cat('ARLin:', ARLin, '\n')
-			
-			ARL0 - ARLin
-		
-		}
-	
-		uniroot(root.finding, interval = interval, tol = tol, ARL0 = ARL0, mu = mu, sigma = sigma, 
-			lambda = lambda, ss = ss, tt = tt, reltol = reltol)$root
-	
-}
+#EWMA.CARL.MC.Q.TRAD <- function(mu, sigma, L, lambda, ss, tt) {
+#
+#	nn <- 2 * tt + 1
+#
+#	Q <- matrix(NA, ncol = nn, nrow = nn)
+#	
+#	zz <- seq(-tt, tt, 1)
+#	
+#	for (l in 1:nn){
+#	
+#		ll <- l - (tt + 1)
+#	
+#		for (k in 1:nn){
+#		
+#			kk <- k - (tt + 1)
+#		
+#			Q[l, k] <- pnorm(mu / sigma + ( 2 * lambda * tt + lambda + 2 * ll - 2 * (1 - lambda) * kk  + 1) / nn / lambda * L * 
+#				sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss)))) - 
+#				pnorm(mu / sigma + (2 * lambda * tt + lambda + 2 * ll - 2 * (1 - lambda) * kk - 1) / nn / lambda * L * 
+#				sqrt(lambda / (2 - lambda) * (1 - (1 - lambda) ^ (2 * ss))))
+#		
+#		}
+#	
+#	}
+#	
+#	Q
+#
+#}
+#
+#
+#
+#EWMA.CARL.MC.xi <- function(tt, mid = tt + 1) {
+#
+#	nn <- 2 * tt + 1
+#	
+#	xi.vec <- rep(0, nn)
+#	
+#	xi.vec[mid] <- 1
+#
+#	xi.vec
+#
+#}
+#
+#EWMA.CARL.MC.TRAD.prod <- function(mu, sigma, L, lambda, ss, tt){
+#
+#	QQ <- EWMA.CARL.MC.Q.TRAD(mu, sigma, L, lambda, ss, tt) 
+#	xi.vec <- EWMA.CARL.MC.xi(tt)
+#	xi.vec <- matrix(xi.vec, nrow = 1, ncol = 2 * tt + 1)
+#	I.matrix <- diag(2 * tt + 1)
+#	
+#	one.vec <- matrix(1, ncol = 1, nrow = 2 * tt + 1)
+#	
+#	inv.matrix <- try(solve(I.matrix - QQ), silent = TRUE)
+#	
+#	if (class(inv.matrix) == 'try-error') {
+#	
+#		#cat('try-error', '\n')
+#		inv.matrix <- MASS::ginv(I.matrix - QQ)
+#	
+#	}
+#	
+#	xi.vec %*% inv.matrix %*% one.vec
+#
+#}
+#
+##EWMA.CARL.MC.TRAD.prod(mu = 0, sigma = 1, L = 3, lambda = 1, ss = Inf, tt = 1000)
+#
+#
+#EWMA.get.cc.MC.TRAD <- function(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 1, 
+#	lambda = 0.2, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6){
+#
+#		root.finding <- function(ARL0, mu, sigma, L, lambda, ss, tt, reltol){
+#		
+#			ARLin <- EWMA.CARL.MC.TRAD.prod(mu, sigma, L, lambda, ss, tt)
+#			
+#			cat('ARLin:', ARLin, '\n')
+#			
+#			ARL0 - ARLin
+#		
+#		}
+#	
+#		uniroot(root.finding, interval = interval, tol = tol, ARL0 = ARL0, mu = mu, sigma = sigma, 
+#			lambda = lambda, ss = ss, tt = tt, reltol = reltol)$root
+#	
+#}
 
 #EWMA.get.cc.MC.TRAD(ARL0 = 370, interval = c(1, 5), mu = 0, sigma = 1, 
 #	lambda = 0.2, ss = Inf, tt = 3, reltol = 1e-6, tol = 1e-6)
