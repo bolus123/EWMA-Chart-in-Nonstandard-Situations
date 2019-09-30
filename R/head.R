@@ -210,8 +210,8 @@ EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt, delta = 0) {
 	
 	theta <- 1 - (1 - lambda) ^ (2 * ss)
 	
-	tau <- L * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) * 
-		sqrt(2 / (2 - lambda)) * sqrt(theta) / (2 * tt + 1) 
+	tau <- L * sqrt(qchisq(V, mm - 1) / (mm - 1)) / c4.f(mm - 1) * 
+		sqrt(lambda / (2 - lambda)) * sqrt(theta) / (2 * tt + 1) 
 	
 	cent <- qnorm(U) / sqrt(mm)
 	
