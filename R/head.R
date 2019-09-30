@@ -206,7 +206,7 @@ EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt, delta = 0) {
 
 	Q <- matrix(NA, ncol = nn, nrow = nn)
 	
-	zz <- seq(-tt, tt, 1)
+	kk <- seq(-tt, tt, 1)
 	
 	theta <- 1 - (1 - lambda) ^ (2 * ss)
 	
@@ -228,8 +228,8 @@ EWMA.CARL.MC.Q <- function(U, V, L, lambda, mm, ss, tt, delta = 0) {
 			#	pnorm(qnorm(U) / sqrt(mm) + (2 * zz - (1 - lambda) * 2 * ll - 1) / nn * 
 			#	(L * sqrt(1 / lambda / (2 - lambda) * (1 - (1 - lambda)^(2 * ss))) * sqrt(qchisq(V, mm - 1)) / c4.f(mm - 1) / sqrt(mm - 1) ) - delta) 
 
-			Q[, l] <- pnorm(cent + (2 * ll - (1 - lambda) * 2 * zz + 1) * tau / lambda - delta) - 
-				pnorm(cent + (2 * ll - (1 - lambda) * 2 * zz - 1) * tau / lambda - delta)
+			Q[, l] <- pnorm(cent + (2 * ll - (1 - lambda) * 2 * kk + 1) * tau / lambda - delta) - 
+				pnorm(cent + (2 * ll - (1 - lambda) * 2 * kk - 1) * tau / lambda - delta)
 		
 		#}
 	
