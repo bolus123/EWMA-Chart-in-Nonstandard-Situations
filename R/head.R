@@ -281,8 +281,17 @@ EWMA.CARL.MC.integral <- function(xmin, xmax, ymin, ymax, L, lambda, mm, ss, tt 
 
 	#cat(m, '\n')
 
-	integral2(EWMA.CARL.MC.integrand, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, 
-		singular = TRUE, vectorized = FALSE, L = L, lambda = lambda, mm = mm, ss = ss, tt = tt, delta = delta, reltol = reltol)$Q
+	out <- try(integral2(EWMA.CARL.MC.integrand, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, 
+		singular = FALSE, vectorized = FALSE, L = L, lambda = lambda, mm = mm, ss = ss, tt = tt, 
+		delta = delta, reltol = reltol)$Q, silent = TRUE)
+	
+	if (class(out) == 'try-error') {
+		out <- integral2(EWMA.CARL.MC.integrand, xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax, 
+			singular = TRUE, vectorized = FALSE, L = L, lambda = lambda, mm = mm, ss = ss, tt = tt, 
+			delta = delta, reltol = reltol)$Q
+	}
+	
+	return(out)
 
 }
 
